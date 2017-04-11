@@ -18,13 +18,21 @@ import android.view.MenuItem;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
+        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, Broadcast.BroadcastListner {
+
+    int fl;
+    String channelNameString;
+
+    @Override
+    public void onButtonService(int flag, String channelName){
+        fl=flag;
+        channelNameString = channelName;
+    }
 
     private GoogleMap mMap;
     @Override
@@ -48,7 +56,14 @@ public class MainActivity extends AppCompatActivity
         mapFragment.getMapAsync(this);
     }
 
-    MapView m;
+    MapsActivityListner activutyCommander;
+
+    public interface MapsActivityListner{
+        public void sendCoordinated(double lat, double lon);
+    }
+
+
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
@@ -67,15 +82,17 @@ public class MainActivity extends AppCompatActivity
             public void onMyLocationChange(Location location) {
                 CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(), location.getLongitude()));
 
-                System.out.println(center + " center " + location.getLatitude() + " latitude " + location.getLongitude() + " longitude ");
+                //System.out.println(center + " center " + location.getLatitude() + " latitude " + location.getLongitude() + " longitude ");
 
                 /**LatLng sydney = new LatLng(location.getLatitude(), location.getLongitude());
                 mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in MyLocation"));
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));**/
 
-                Client c=new Client(center, location.getLatitude(), location.getLongitude());
-                c.execute();
-
+                if (fl==1) {
+                    BroadcastClient c = new BroadcastClient();
+                    c.Client(channelNameString, location.getLatitude(), location.getLongitude());
+                    c.execute();
+                }
                 mMap.moveCamera(center);
             }
         });
@@ -120,15 +137,15 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
         FragmentManager fragmentManager=getFragmentManager();
 
-        if (id == R.id.nav_first) {
+        if (id == R.id.broadcast) {
             fragmentManager.beginTransaction()
                     .replace(R.id.content_frame
-                    , new FirstFrag()).commit();
+                    , new Broadcast()).commit();
 
-        } else if (id == R.id.nav_two) {
+        } else if (id == R.id.recieve) {
             fragmentManager.beginTransaction()
                     .replace(R.id.content_frame
-                            , new SecondFrag()).commit();
+                            , new Recieve()).commit();
 
         } else if (id == R.id.nav_three) {
             fragmentManager.beginTransaction()

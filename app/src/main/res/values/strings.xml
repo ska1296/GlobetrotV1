@@ -12,4 +12,5 @@
     <string name="the_search_button">Search</string>
     <string name="sned_button">Send</string>
     <string name="search_button">Search</string>
+    <string name="channel_name_string">Channel Name</string>
 </resources>
