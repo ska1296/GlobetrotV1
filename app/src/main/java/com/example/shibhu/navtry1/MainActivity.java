@@ -21,17 +21,24 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, Broadcast.BroadcastListner {
+        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, Broadcast.BroadcastListner, Recieve.RecieveListner {
 
-    int fl;
-    String channelNameString;
+    int flagBroadcast, flagRecieved;
+    String channelNameStringSent, channelNameStringRecieved;
 
     @Override
     public void onButtonService(int flag, String channelName){
-        fl=flag;
-        channelNameString = channelName;
+        flagBroadcast = flag;
+        channelNameStringSent = channelName;
+    }
+
+    @Override
+    public void onRecieveButtonService(int flag, String channelName) {
+        flagRecieved =flag;
+        channelNameStringRecieved =channelName;
     }
 
     private GoogleMap mMap;
@@ -56,13 +63,11 @@ public class MainActivity extends AppCompatActivity
         mapFragment.getMapAsync(this);
     }
 
-    MapsActivityListner activutyCommander;
+    MapsActivityListner activityCommander;
 
     public interface MapsActivityListner{
-        public void sendCoordinated(double lat, double lon);
+        public void sendCoordinates(double lat, double lon);
     }
-
-
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -85,15 +90,35 @@ public class MainActivity extends AppCompatActivity
                 //System.out.println(center + " center " + location.getLatitude() + " latitude " + location.getLongitude() + " longitude ");
 
                 /**LatLng sydney = new LatLng(location.getLatitude(), location.getLongitude());
-                mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in MyLocation"));
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));**/
-
-                if (fl==1) {
+                 mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in MyLocation"));
+                 mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));**/
+                System.out.println("abcdefgh " + flagRecieved + " 2345");
+                System.out.println("chnnlname=" + channelNameStringRecieved + "flggg=" + flagRecieved);
+                if (flagBroadcast == 1) {
+                    LatLng broadcastLocation = new LatLng(location.getLatitude(), location.getLongitude());
                     BroadcastClient c = new BroadcastClient();
-                    c.Client(channelNameString, location.getLatitude(), location.getLongitude());
+                    c.BroadClient(channelNameStringSent, location.getLatitude(), location.getLongitude());
                     c.execute();
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(broadcastLocation));
                 }
-                mMap.moveCamera(center);
+
+                if(flagRecieved ==1) {
+                    System.out.println("abcdefgh" + flagRecieved + "eatshit");
+                    RecieveClient rc=new RecieveClient();
+                    rc.RecieveClient(channelNameStringRecieved);
+                    System.out.println(channelNameStringRecieved);
+                    rc.execute();
+                    double latit=rc.getLatitude();
+                    double longit=rc.getLongitude();
+                    System.out.println(latit+" latit");
+                    System.out.println(longit + " longit");
+
+                    LatLng sydney = new LatLng(latit, longit);
+                    mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in MyLocation"));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+
+                    System.out.println("executed");
+                }
             }
         });
     }
