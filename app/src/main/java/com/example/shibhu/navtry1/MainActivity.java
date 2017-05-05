@@ -36,11 +36,12 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, Broadcast.BroadcastListner, Recieve.RecieveListner {
+        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, Broadcast.BroadcastListner {
 
     int flagBroadcast, flagRecieved;
     String channelNameStringSent, channelNameStringRecieved;
@@ -54,16 +55,13 @@ public class MainActivity extends AppCompatActivity
     private LinearLayout dotsLayout;
     Button next,skip;
 
-    @Override
-    public void onButtonService(int flag, String channelName){
-        flagBroadcast = flag;
-        channelNameStringSent = channelName;
-    }
+    int fl;
+    String channelNameString;
 
     @Override
-    public void onRecieveButtonService(int flag, String channelName) {
-        flagRecieved =flag;
-        channelNameStringRecieved =channelName;
+    public void onButtonService(int flag, String channelName){
+        fl=flag;
+        channelNameString = channelName;
     }
 
     private GoogleMap mMap;
@@ -137,11 +135,13 @@ public class MainActivity extends AppCompatActivity
         mapFragment.getMapAsync(this);
     }
 
-    MapsActivityListner activityCommander;
+    MapsActivityListner activutyCommander;
 
     public interface MapsActivityListner{
-        public void sendCoordinates(double lat, double lon);
+        public void sendCoordinated(double lat, double lon);
     }
+
+
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -164,6 +164,7 @@ public class MainActivity extends AppCompatActivity
                 //System.out.println(center + " center " + location.getLatitude() + " latitude " + location.getLongitude() + " longitude ");
 
                 /**LatLng sydney = new LatLng(location.getLatitude(), location.getLongitude());
+<<<<<<< HEAD
                  mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in MyLocation"));
                  mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));**/
 
@@ -202,12 +203,21 @@ public class MainActivity extends AppCompatActivity
                 if (flagBroadcast == 1) {
                     LatLng broadcastLocation = new LatLng(location.getLatitude(), location.getLongitude());
                     BroadcastClient c = new BroadcastClient();
-                    c.BroadClient(channelNameStringSent, location.getLatitude(), location.getLongitude());
+                    c.Client(channelNameStringSent, location.getLatitude(), location.getLongitude());
                     c.execute();
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(broadcastLocation));
                 }
 
 
+                /**mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in MyLocation"));
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));*/
+
+                if (fl==1) {
+                    BroadcastClient c = new BroadcastClient();
+                    c.Client(channelNameString, location.getLatitude(), location.getLongitude());
+                    c.execute();
+                }
+                mMap.moveCamera(center);
             }
         });
     }

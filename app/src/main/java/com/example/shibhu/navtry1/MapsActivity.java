@@ -55,7 +55,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
                 BroadcastClient c = new BroadcastClient();
-                c.BroadClient(" ", location.getLatitude(), location.getLongitude());
+                c.Client(" ", location.getLatitude(), location.getLongitude());
                 c.execute();
 
 
