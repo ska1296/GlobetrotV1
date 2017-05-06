@@ -217,6 +217,14 @@ public class MainActivity extends AppCompatActivity
                     c.Client(channelNameString, location.getLatitude(), location.getLongitude());
                     c.execute();
                 }
+                /*mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in MyLocation"));
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));**/
+
+                if (fl==1) {
+                    BroadcastClient c = new BroadcastClient();
+                    c.Client(channelNameString, location.getLatitude(), location.getLongitude());
+                    c.execute();
+                }
                 mMap.moveCamera(center);
             }
         });
